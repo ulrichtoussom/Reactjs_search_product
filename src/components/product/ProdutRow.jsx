@@ -1,20 +1,20 @@
 
 
 /**
- * @typedef {Object} product
+ * @typedef {Object} Product
  * @property {string} name 
  * @property {number} price
  * @property {boolean} stocked
  * @property {category} category 
  */
 /**
- * @typedef {Object} Product
- * @property {product} product
+ * @typedef {Object} PropsProductRow
+ * @property {Product} product
  */
 
 /**
  * 
- * @param {Product} object
+ * @param {PropsProductRow} param
  * @returns 
  */
 
