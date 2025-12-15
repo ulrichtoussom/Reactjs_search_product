@@ -2,7 +2,7 @@
 
 
 /**
- * @typedef {Object} product
+ * @typedef {Object} Product
  * @property {string} name 
  * @property {number} price
  * @property {string} category
@@ -10,13 +10,13 @@
  */
 
 /**
- * @typedef {Object} Product
- * @property {product} product
+ * @typedef {Object} PropsProductCat
+ * @property {Product} product
  */
 
 /**
  * 
- * @param {Product} object 
+ * @param {PropsProductCat}  
  * @returns 
  */
 export function ProductCat({product}){
@@ -28,3 +28,5 @@ export function ProductCat({product}){
         </tr>
     )
 }
+
+
