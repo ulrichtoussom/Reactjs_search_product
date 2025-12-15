@@ -1,25 +1,33 @@
 
+
+/**
+ * @typedef {Object} PropsCheckbox
+ * @property {boolean} isChecked
+ * @property {()=> boolean} onChangeChecked
+ */ 
+
 /**
  * 
- * @param {{ 
-*      check:boolean,
-*      onChange:()=>void,
-*      label:string,
-*      id:string
-* }} param0 
-* @returns 
-*/
-
-export default function Checkbox({check, onChange, label, id}) {
+ * @param {PropsCheckbox} param0
+ * @returns 
+ */
+export default function Checkbox({isChecked, onChangeChecked}) {
 
 
         
     
 
    return(
-       <div className="form-check my-2">
-           <input type="checkbox" className="form-check-input" checked={check} onChange={(e)=>onChange(e.target.checked)} id={id} />
-           <label id={id} className="form-check-label" htmlFor={id}>{label}</label>
-       </div>
+        <div className="form-check my-2">
+            <input 
+                className="form-check-input" 
+                type="checkbox" 
+                checked = {isChecked}
+                onChange = {((e)=>onChangeChecked(e.target.checked))}
+                id="checkDefault" />
+            <label className="form-check-label" htmlFor="checkDefault">
+                Show Only stocked 
+            </label>
+        </div>
    )
 }

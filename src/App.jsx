@@ -2,6 +2,7 @@
 
 import Checkbox from './components/form/Checkbox'
 import Input from './components/form/Input'
+import InputRange from './components/form/InputRange'
 
 import ProductRow from './components/product/ProdutRow'
 
@@ -9,137 +10,149 @@ import { ProductCat } from './components/product/productCat'
 
 import './App.css'
 
-function App() {
 
 
-
-/**
- * @type {boolean}
- */
-const [isStocked, SetIsStoked] = useState(false)
-
-const [phrase , setPhrase] = useState('')
-
-  
-
-  return (
-      <div className=''>
-        
-        <Serchbar stocked={isStocked} onStocked={SetIsStoked} message={phrase} setPhrase={setPhrase}  />
-        <TableRow isStocked={isStocked} searchMessage = {phrase} />
- 
-      </div>
-  )
-}
-
-
-
-/**
- * @typedef {Object} PropSearch
- * @property {boolean} stocked
- * @property {()=>boolean} onStocked
- * @property {string} message 
- * @property {()=> string} OnMessage
- */
-
-/**
- * 
- * @param {PropSearch} props
- * @returns 
- */
-const Serchbar = ({stocked , onStocked, message, setPhrase})=>{
-
-  return (
-    <div className="container my-3">
-       <Input placeHolder='Entrer votre recherche ...' value={message} onChanged={setPhrase} />
-       <Checkbox id='search' check={stocked} onChange={onStocked} label="N'afficher que les  produits en stock " />
-    </div>
-  )
-}
-
-
-
-/**
- * @typedef {Object}PropsTableRow
- * @property {boolean} isStocked
- * @property {string} searchMessage
- */
-
-/**
- * 
- * @param {PropsTableRow} param0 
- * @returns 
- */
-
-const TableRow = function({isStocked,searchMessage}){
-
-
-  const [PRODUCTS, setPRODUCT] = useState([  
-    {category: "Fruits", price: "$1", stocked: true, name: "Apple"},  
-    {category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit"},  
-    {category: "Fruits", price: "$2", stocked: false, name: "Passionfruit"},  
-    {category: "Vegetables", price: "$2", stocked: true, name: "Spinach"},  
-    {category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin"},  
-    {category: "Vegetables", price: "$1", stocked: true, name: "Peas"}  
-  ])
-
-  
-  
-  const filterProduct = PRODUCTS.filter( (product) => {
-
-        const matchSearch = product.name.toLowerCase().startsWith(searchMessage.toLowerCase())
-        const matchStock = isStocked ? product.stocked : true 
-
-        return matchSearch && matchStock
-  })
-
-  console.log(filterProduct)
-
-
-  let fruits = []
-  let vegetables = []
-  
-  vegetables =filterProduct.filter(product =>( product.category==='Vegetables'))
-  fruits = filterProduct.filter(product => (product.category==='Fruits'))
-  
-  
-  const jsxFruit = fruits.map( fruit => {
-    return(
-      <React.Fragment key={fruit.name}>
-          <ProductCat product={fruit}/> 
-          <ProductRow product={fruit} />
-      </React.Fragment>
-    )
-  })
-
-  const jsxvegetables = vegetables.map( vegetable => {
-    return(
-      <React.Fragment key={vegetable.name}>
-          <ProductCat product={vegetable}/>
-          <ProductRow product={vegetable} />
-      </React.Fragment>
-    )
-  })
-
-  
-
-  return(
-    <div className="container">
-      Bonjour le Monde 
-      <table className='table table-striped'>
-         
-        <tbody>
-          {jsxFruit}
-          {jsxvegetables}      
-        </tbody>
-      </table>
-      
-    </div>
-  )
-}
 
 export default App
 
+
+
+function App(){
+
+  const [showOnlyStocked,  SetShowOnlyStocked] = useState(false)
+  const [search , setSearch]= useState('')
+
+  const [searchByPrice, setSearchByPrice] = useState(0)
+
+  const PRODUCTS = [  
+    {category: "Fruits", price: "$10", stocked: true, name: "Apple"},  
+    {category: "Fruits", price: "$15", stocked: true, name: "Dragonfruit"},  
+    {category: "Fruits", price: "$20", stocked: false, name: "Passionfruit"},  
+    {category: "Vegetables", price: "$6", stocked: true, name: "Spinach"},  
+    {category: "Vegetables", price: "$7", stocked: false, name: "Pumpkin"},  
+    {category: "Vegetables", price: "$4", stocked: true, name: "Peas"}  
+]
+
+  console.log(searchByPrice)
+
+
+  const filterProduct = PRODUCTS.filter(product => {
+
+      const priceValue = parseInt(product.price.slice(1))
+
+      if(showOnlyStocked && !product.stocked){
+          return false 
+      }
+      if(search && !product.name.toLowerCase().includes(search.toLowerCase()) ){{
+        return false 
+      }}
+
+      if(priceValue < searchByPrice){
+        return false 
+      }
+
+      return true 
+  })
+
+
+
+  return (
+    <div className='container'>
+
+      <SearchBar search={search} onSearch={setSearch} showOnlyStocked={showOnlyStocked} changeShowOnlyStocked={SetShowOnlyStocked} searchByPrice = {searchByPrice} onChangeSearchPrice ={setSearchByPrice}  />
+      <TableRow productList={filterProduct}/>
+
+    </div>
+  )
+
+
+}
+
+
+
+/**
+ * 
+ * @typedef {Object} PropsSearchBar
+ * @property {string} search
+ * @property {() => string} onSearch
+ * @property {boolean} showOnlyStocked
+ * @property {() => boolean} changeShowOnlyStocked
+ * @property {number} searchByPrice
+ * @property {()=> number } onChangeSearchPrice
+ *  
+ * 
+ * 
+ */
+
+/**
+ * 
+ * @param {PropsSearchBar} param 
+ * @returns 
+ */
+
+  const SearchBar = function({search, onSearch, showOnlyStocked, changeShowOnlyStocked, searchByPrice, onChangeSearchPrice}){
+
+
+  return (
+    <>
+      <Input value={search} onChangeValue={onSearch} />
+      <Checkbox ischecked={showOnlyStocked}  onChangeChecked={changeShowOnlyStocked} />
+      <InputRange searchByPrice={searchByPrice} onChangeSearchPrice={onChangeSearchPrice}/>
+
+    </>
+  )
+}
+
+/**
+ * @typedef {Object} Product
+ * @property {string}   category
+ * @property {number}   price
+ * @property {boolean}  stocked
+ * @property {string}   name
+ */
+
+/**
+ * @typedef {Object} PropsTableRow 
+ * @property {Array<Product>} productList
+ */
+
+/**
+ * 
+ * @param {PropsTableRow} param 
+ */
+
+
+const TableRow =  function({productList}){
+
+    const tablejsx = []
+    let categ = ''
+
+    for (const product of productList){
+
+        
+        if (categ !== product.category){
+          tablejsx.push(<ProductCat key={product.category} product={product} />)
+          categ = product.category
+        }
+        tablejsx.push(<ProductRow key={product.name} product={product} />)
+    }
+
+    return(
+      <table className='table table-striped mt-5'>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {tablejsx}
+        </tbody>
+      </table>
+    )
+
+}
 
 
 
